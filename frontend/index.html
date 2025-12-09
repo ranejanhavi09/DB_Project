@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Olist Recommendation Engine</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Olist Recommendation Engine</h1>
+            <p class="subtitle">Graph Database-Powered Product Recommendations</p>
+        </header>
+
+        <div class="main-content">
+            <!-- Customer Selection Section -->
+            <section class="section">
+                <h2>Select Customer</h2>
+                <div class="customer-selector">
+                    <select id="customerSelect" class="select-input">
+                        <option value="">Loading customers...</option>
+                    </select>
+                    <button id="loadCustomerBtn" class="btn btn-primary">Load Customer</button>
+                </div>
+                <div id="customerInfo" class="customer-info hidden"></div>
+            </section>
+
+            <!-- Algorithm Selection -->
+            <section class="section">
+                <h2>Recommendation Algorithm</h2>
+                <div class="algorithm-selector">
+                    <label class="radio-label">
+                        <input type="radio" name="algorithm" value="hybrid" checked>
+                        <span>Hybrid (Recommended)</span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="algorithm" value="collaborative">
+                        <span>Collaborative Filtering</span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="algorithm" value="content">
+                        <span>Content-Based</span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="algorithm" value="sentiment">
+                        <span>Sentiment-Based</span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="algorithm" value="seller">
+                        <span>Seller-Based</span>
+                    </label>
+                </div>
+                <button id="getRecommendationsBtn" class="btn btn-primary" disabled>Get Recommendations</button>
+            </section>
+
+            <!-- Recommendations Section -->
+            <section class="section">
+                <h2>Recommendations</h2>
+                <div id="loadingIndicator" class="loading hidden">
+                    <div class="spinner"></div>
+                    <p>Loading recommendations...</p>
+                </div>
+                <div id="recommendations" class="recommendations"></div>
+            </section>
+
+            <!-- Statistics Section -->
+            <section class="section">
+                <h2>Database Statistics</h2>
+                <div id="stats" class="stats"></div>
+            </section>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
+
