@@ -2,7 +2,7 @@
 const API_BASE_URL = 'http://localhost:5001/api';
 
 // DOM Elements
-const customerSelect = document.getElementById('customerSelect');
+const customerInput = document.getElementById('customerInput');
 const loadCustomerBtn = document.getElementById('loadCustomerBtn');
 const getRecommendationsBtn = document.getElementById('getRecommendationsBtn');
 const customerInfo = document.getElementById('customerInfo');
@@ -14,41 +14,24 @@ let currentCustomerId = null;
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
-    loadCustomers();
     loadStats();
     
     loadCustomerBtn.addEventListener('click', handleLoadCustomer);
     getRecommendationsBtn.addEventListener('click', handleGetRecommendations);
-});
-
-// Load customers list
-async function loadCustomers() {
-    try {
-        const response = await fetch(`${API_BASE_URL}/customers`);
-        const data = await response.json();
-        
-        if (data.success) {
-            customerSelect.innerHTML = '<option value="">Select a customer...</option>';
-            data.customers.forEach(customer => {
-                const option = document.createElement('option');
-                option.value = customer.customer_unique_id;
-                option.textContent = `${customer.customer_unique_id} - ${customer.city || 'Unknown'}, ${customer.state || 'Unknown'} (${customer.total_orders || 0} orders)`;
-                customerSelect.appendChild(option);
-            });
-        } else {
-            showError('Failed to load customers');
+    
+    // Allow Enter key to trigger load customer
+    customerInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            handleLoadCustomer();
         }
-    } catch (error) {
-        console.error('Error loading customers:', error);
-        showError('Error connecting to API. Make sure the backend server is running.');
-    }
-}
+    });
+});
 
 // Load customer information
 async function handleLoadCustomer() {
-    const customerId = customerSelect.value;
+    const customerId = customerInput.value.trim();
     if (!customerId) {
-        alert('Please select a customer');
+        alert('Please enter a customer ID');
         return;
     }
     
@@ -136,8 +119,16 @@ function displayRecommendations(recs, algorithm) {
         const rating = rec.avg_rating || 0;
         const ratingClass = rating >= 4 ? 'high' : rating >= 3 ? 'medium' : 'low';
         
+        // Generate explanation based on algorithm type
+        const explanation = generateExplanation(rec, algorithm);
+        
         card.innerHTML = `
             <h3>Product #${index + 1}</h3>
+            ${explanation ? `
+            <div class="explanation-row">
+                <span class="explanation-text">${explanation}</span>
+            </div>
+            ` : ''}
             <div class="info-row">
                 <span class="info-label">Product ID:</span>
                 <span class="info-value">${rec.product_id.substring(0, 20)}...</span>
@@ -190,6 +181,48 @@ function displayRecommendations(recs, algorithm) {
         
         recommendations.appendChild(card);
     });
+}
+
+// Generate explanation for why a product is recommended
+function generateExplanation(rec, algorithm) {
+    if (!rec.explanation_data) {
+        return null;
+    }
+    
+    switch (algorithm) {
+        case 'collaborative':
+            const shopperCount = rec.explanation_data || 0;
+            if (shopperCount === 1) {
+                return '1 similar shopper also bought this product';
+            } else {
+                return `${shopperCount} similar shoppers also bought this product`;
+            }
+            
+        case 'content':
+            if (rec.explanation_data) {
+                const relatedProductId = rec.explanation_data.substring(0, 20) + '...';
+                return `Because you also bought product ${relatedProductId}`;
+            }
+            return null;
+            
+        case 'sentiment':
+            const reviewCount = rec.explanation_data || 0;
+            if (reviewCount > 0) {
+                return `Highly rated by ${reviewCount} ${reviewCount === 1 ? 'customer' : 'customers'} with positive sentiment`;
+            }
+            return 'Recommended based on positive customer sentiment';
+            
+        case 'seller':
+            const orderCount = rec.explanation_data || 0;
+            if (orderCount === 1) {
+                return 'From a seller you\'ve ordered from before';
+            } else {
+                return `From a seller you've ordered from ${orderCount} times`;
+            }
+            
+        default:
+            return null;
+    }
 }
 
 // Get algorithm display name
