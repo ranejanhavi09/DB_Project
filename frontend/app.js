@@ -174,7 +174,7 @@ function displayRecommendations(recs, algorithm) {
             ${rec.seller_id ? `
             <div class="info-row">
                 <span class="info-label">Seller Location:</span>
-                <span class="info-value">${rec.seller_id || 'Unknown'}</span>
+                <span class="info-value">${rec.seller_city || 'Unknown'}</span>
             </div>
             ` : ''}
         `;
