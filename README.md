@@ -182,25 +182,121 @@ GET /api/categories
 ```
 
 
+
+### 2. Install MySql
+
+**Option A: MySQL Workbench (Recommended)**
+1. Install and create a new database
+2. Start the database
+3. Note your connection details (URI, username, password)
+
+
+### 2. Install Python Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Configure Environment
+
+Copy the example environment file and update with your MySQL credentials:
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` and update:
+```
+MYSQL_HOST=localhost
+MYSQL_USER=root
+MYSQL_PASSWORD=  # <-- ADD YOUR PASSWORD HERE
+MYSQL_DATABASE= # <-- Changed to 'com_master'
+MYSQL_PORT=3306
+MYSQL_POOL_SIZE=5
+MYSQL_POOL_NAME=seller_dashboard_pool
+```
+
+### 4. Create Database Schema
+Run the DDL script to create all required tables:
+```
+mysql -u root -p < database_ddl.sql
+```
+
+### 5. Load Stored Procedures
+Load analytics and reporting stored procedures:
+```
+mysql -u root -p < stored_procedures.sql
+```
+
+### 6. Test MySQL Connection
+Validate the database connection:
+```
+python test_mysql_connection.py
+```
+
+▶️ Step 7: Run Seller Dashboard Application
+```
+python seller_app_v4.py
+```
 ## Project Structure
+
 
 ```
 DB_Project/
-├── Datasets/                    # CSV data files
-├── frontend/                    # Web UI
-│   ├── index.html
-│   ├── styles.css
-│   └── app.js
-├── config.py                    # Configuration
-├── database.py                  # Neo4j connection
-├── data_loader.py               # Data import script
-├── recommendation_engine.py      # Recommendation algorithms
-├── app.py                       # Flask API
-├── requirements.txt             # Python dependencies
-├── .env.example                 # Environment template
-├── README.md                    # This file
+├── pycache/ # Python cache files
+├── .git/ # Git repository
+├── .env # Environment variables (local)
+├── .env.example # Environment variable template
+├── .gitignore # Git ignore rules
+├── app.py # Flask API for Neo4j recommendation engine
+├── recommendation_engine.py # Core recommendation algorithms
+├── database.py # Neo4j database connection
+├── data_loader.py # Loads CSV data into Neo4j
+├── config.py # Neo4j configuration
+├── config-sql.py # MySQL configuration for Seller Dashboard
+├── requirements.txt # Python dependencies
+│
+├── Datasets/ # Olist CSV datasets
+│
+├── frontend/ # Recommendation Engine UI
+│ ├── index.html
+│ ├── styles.css
+│ └── app.js
+│
+├── static/ # Static assets (CSS/JS/images)
+├── templates/ # Flask HTML templates
+│
+├── routes/ # Flask route definitions
+├── services/ # Business logic services
+├── repositories/ # Database access layer
+│
+├── db/ # Database-related utilities
+│
+├── database_ddl.sql # MySQL schema definition
+├── stored_procedures.sql # MySQL stored procedures
+├── ddl.txt # Generated DDL snapshot
+│
+├── test_mysql_connection.py # MySQL connectivity test
+├── test_seller_dashboard.py # Seller dashboard tests
+│
+├── seller_app.py # Initial seller dashboard version
+├── seller_app_v2.py # Seller dashboard (v2)
+├── seller_app_v3.py # Seller dashboard (v3)
+├── seller_app_v4.py # ⭐ Primary seller dashboard implementation
+├── seller_app_v5.py # Enhanced seller dashboard
+├── seller_app_v6.py # Latest experimental version
+│
+├── check_tables.py # MySQL table validation script
+├── check_columns.py # MySQL column validation script
+├── debug_data.py # Data debugging utilities
+├── get_ddl.py # Auto DDL extraction script
+│
+├── order_reviews_preprocessing.ipynb # Review sentiment preprocessing
+│
+├── README.md # Project documentation
+├── QUICKSTART.md # Quick setup guide
 ├── DATASET_SCHEMA_DOCUMENTATION.md
-└── GRAPH_DB_SCHEMA.md          # Graph schema documentation
+├── GRAPH_DB_SCHEMA.md
 ```
 
 ## Usage Guide
