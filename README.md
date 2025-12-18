@@ -1,23 +1,70 @@
 # Olist Recommendation Engine
 
-A graph database-powered recommendation system for the Olist Brazilian E-Commerce dataset. This project uses Neo4j to store customer, order, product, and review data, and provides multiple recommendation algorithms through a web interface.
 
-## Features
+- A **graph-database-powered recommendation engine** using **Neo4j**
+- A **Seller Analytics Dashboard** backed by **MySQL**, designed to provide sellers with actionable insights
 
-- **Graph Database**: Neo4j for efficient relationship queries
-- **Multiple Recommendation Algorithms**:
+This project demonstrates the use of **both relational and graph databases** to solve real-world e-commerce problems.
+
+
+## 🚀 Project Overview
+
+
+### 1️⃣ Recommendation Engine (Neo4j)
+
+The recommendation engine models customers, products, sellers, orders, categories, and reviews as a **graph** to efficiently capture complex relationships and deliver personalized recommendations.
+
+### 2️⃣ Seller Dashboard (MySQL)
+
+The seller dashboard is built using a **MySQL relational database** and provides sellers with insights such as:
+
+- Sales performance
+- Order trends
+- Product analytics
+- Revenue metrics
+
+📌 **Primary dashboard implementation:**  
+`seller_app_v4.py`
+
+## ✨ Features
+
+### Recommendation Engine (Neo4j)
+- Graph Database: Neo4j for efficient relationship queries
+- Multiple Recommendation Algorithms:
   - Hybrid (combines multiple signals)
   - Collaborative Filtering (similar customers)
   - Content-Based (category preferences)
   - Sentiment-Based (positive reviews)
   - Seller-Based (preferred sellers)
-- **Web UI**: Modern, responsive interface for exploring recommendations
-- **REST API**: Flask backend with comprehensive endpoints
+- REST API built with Flask
+- Modern web UI for exploring recommendations
 
-## Prerequisites
+### Seller Dashboard (MySQL)
+- MySQL database integration using MySQL Workbench connection
+- Seller-level analytics and KPIs
+- Stored procedures and DDL scripts
+- Flask-based dashboard backend
+- Modular versioning (`seller_app_v2` → `seller_app_v6`)
+
+
+## 🛠️ Tech Stack
+
+- **Backend:** Python, Flask
+- **Graph Database:** Neo4j
+- **Relational Database:** MySQL
+- **Frontend:** HTML, CSS, JavaScript
+- **APIs:** REST
+- **Data Processing:** Python, SQL
+- **Tools:** Neo4j Desktop, MySQL Workbench
+
+---
+
+## 📦 Prerequisites
 
 - Python 3.8+
 - Neo4j Database (Community Edition or Desktop)
+- MySQL Server
+- MySQL Workbench
 - Node.js (optional, for frontend development)
 
 ## Installation
@@ -133,6 +180,7 @@ GET /api/products/<product_id>
 GET /api/stats
 GET /api/categories
 ```
+
 
 ## Project Structure
 
