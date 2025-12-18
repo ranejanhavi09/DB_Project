@@ -102,28 +102,38 @@ class RecommendationEngine:
     
     def sentiment_based_filtering(self, customer_unique_id, limit=Config.MAX_RECOMMENDATIONS):
         """
-        Sentiment-based filtering: Recommend products with positive sentiment
+        Sentiment-based filtering: Recommend highly rated products in categories customer has bought
         """
         query = """
+        // Get categories the customer has bought from
         MATCH (c:Customer {customer_unique_id: $customer_id})-[:PLACED_ORDER]->(o:Order)
-              -[:CONTAINS_PRODUCT]->(p:Product)
-        WITH p, COUNT(*) as times_purchased
-        MATCH (p)<-[:CONTAINS_PRODUCT]-(o2:Order)-[:HAS_REVIEW]->(r:Review)
+              -[:CONTAINS_PRODUCT]->(p:Product)-[:BELONGS_TO_CATEGORY]->(cat:ProductCategory)
+        WITH DISTINCT cat
+        
+        // Find products in those categories that customer hasn't bought
+        MATCH (cat)<-[:BELONGS_TO_CATEGORY]-(rec:Product)
+        WHERE NOT EXISTS {
+            (c:Customer {customer_unique_id: $customer_id})-[:PLACED_ORDER]->(:Order)
+            -[:CONTAINS_PRODUCT]->(rec)
+        }
+        
+        // Get sentiment and review data
+        MATCH (rec)<-[:CONTAINS_PRODUCT]-(o2:Order)-[:HAS_REVIEW]->(r:Review)
         WHERE r.predicted_sentiment = "POSITIVE" 
           AND r.sentiment_confidence >= $min_confidence
           AND r.review_score >= $min_score
-        WITH p, times_purchased,
+        WITH rec, cat,
              AVG(r.review_score) as avg_score,
              COUNT(r) as review_count,
              AVG(r.sentiment_confidence) as avg_confidence
         WHERE review_count >= $min_reviews
-        RETURN p.product_id as product_id,
-               p.total_sales as total_sales,
-               p.avg_price as avg_price,
+        RETURN rec.product_id as product_id,
+               rec.total_sales as total_sales,
+               rec.avg_price as avg_price,
                avg_score as avg_rating,
                review_count,
                avg_confidence as sentiment_confidence,
-               times_purchased,
+               cat.product_category_name_english as category,
                review_count as explanation_data
         ORDER BY avg_score DESC, review_count DESC, sentiment_confidence DESC
         LIMIT $limit

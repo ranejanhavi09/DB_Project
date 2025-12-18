@@ -173,8 +173,8 @@ function displayRecommendations(recs, algorithm) {
             ` : ''}
             ${rec.seller_id ? `
             <div class="info-row">
-                <span class="info-label">Seller:</span>
-                <span class="info-value">${rec.seller_city || 'Unknown'}</span>
+                <span class="info-label">Seller Location:</span>
+                <span class="info-value">${rec.seller_id || 'Unknown'}</span>
             </div>
             ` : ''}
         `;
@@ -207,10 +207,11 @@ function generateExplanation(rec, algorithm) {
             
         case 'sentiment':
             const reviewCount = rec.explanation_data || 0;
+            const category = rec.category || 'this category';
             if (reviewCount > 0) {
-                return `Highly rated by ${reviewCount} ${reviewCount === 1 ? 'customer' : 'customers'} with positive sentiment`;
+                return `In category ${category} highly rated by ${reviewCount} ${reviewCount === 1 ? 'person' : 'people'}`;
             }
-            return 'Recommended based on positive customer sentiment';
+            return `In category ${category} - recommended based on positive customer sentiment`;
             
         case 'seller':
             const orderCount = rec.explanation_data || 0;
